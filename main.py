@@ -1,22 +1,19 @@
-from typing import Union
-
-from fastapi import FastAPI
 import os
 from dotenv import load_dotenv
+from telegram import Update
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
 load_dotenv()
-
-app = FastAPI()
 
 TELEGRAM_KEY = os.getenv('TELEGRAM_KEY')
 
 
-@app.get("/")
-def read_root():
-    return {"Hello": TELEGRAM_KEY}
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await update.message.reply_text(f'Hello {update.effective_user.first_name}')
 
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}
+app = ApplicationBuilder().token(TELEGRAM_KEY).build()
 
+app.add_handler(CommandHandler("start", start))
+
+app.run_polling()
