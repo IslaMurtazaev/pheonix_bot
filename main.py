@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
-from database_utils import create_user, creat_tasks, setup_database
+from database_utils import create_user, creat_tasks, setup_database, get_today_tasks
 
 load_dotenv()
 
@@ -29,6 +29,7 @@ async def track(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 async def complete(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    get_today_tasks()
     await update.message.reply_text(f'Woohoo good job!')
 
 app = ApplicationBuilder().token(TELEGRAM_KEY).build()

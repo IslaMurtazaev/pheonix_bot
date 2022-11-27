@@ -1,5 +1,6 @@
 import sqlite3
 from telegram import User, Message
+import datetime
 
 
 def connect_to_db():
@@ -60,5 +61,24 @@ def creat_tasks(message: Message):
             INSERT INTO Tasks ('date', 'user_id', 'description')
             VALUES ('{message.date}', '{message.from_user.id}', '{task}');
         """)
+
+    connection.commit()
+
+
+def get_today_tasks():
+    connection, cursor = connect_to_db()
+
+    today = datetime.datetime.now().date()
+    tomorrow = today + datetime.timedelta(days=1)
+
+    res = cursor.execute(f"""
+        select *
+        from Tasks
+        where date between '{today}' and '{tomorrow}';
+    """)
+
+    tasks = res.fetchall()
+
+    print(tasks)
 
     connection.commit()
